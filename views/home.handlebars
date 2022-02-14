@@ -1,0 +1,19 @@
+
+ <form method="GET" action="/equipos/agregar/">  
+       <input type="submit" class="btn btn-primary" value="Add Team">
+     </form> 
+<table class="table">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Name</th>
+            <th scope="col">Country</th>
+            <th scope="col">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+       
+              {{>listado-equipos equipos=data.equipos}}
+         
+        </tbody>
+      </table>
