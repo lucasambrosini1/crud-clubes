@@ -1,0 +1,14 @@
+
+             {{#each equipos as |equipo| }}
+               <tr>
+            <th scope="row">{{equipo.id}}</th>
+            <td>{{equipo.name}}</td>
+            <td>{{equipo.area.name}}</td>
+            <td><a href="equipos/{{equipo.id}}/ver">View</a>
+            <a href="equipos/{{equipo.id}}/editar">Edit</a>
+            <a href="equipos/{{equipo.id}}/borrar">Delete</a>
+            
+            </td>
+            </tr>
+{{/each}}
+
