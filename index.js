@@ -1,6 +1,7 @@
 const fs = require('fs');
 const express = require('express');
 const multer = require('multer');
+const { v4: uuidv4 } = require('uuid');
 
 const upload = multer({ dest: './uploads/imagenes' });
 const exphbs = require('express-handlebars');
@@ -32,7 +33,7 @@ app.get('/equipos', (req, res) => {
 
 app.get('/equipos/:id/ver', (req, res) => {
   const equipos =  obtenerEquipos()
-  const id = Number(req.params.id)
+  const id = req.params.id
   res.render('mostrar-equipo', {
     layout: 'estructura',
     data: {
@@ -44,7 +45,7 @@ app.get('/equipos/:id/ver', (req, res) => {
 
 app.get('/equipos/:id/editar', (req, res) => {
   const equipos = obtenerEquipos()
-  const id = Number(req.params.id)
+  const id = req.params.id
   res.render('formulario-equipo-editar', {
     layout: 'estructura',
     data: {
@@ -54,10 +55,15 @@ app.get('/equipos/:id/editar', (req, res) => {
 });
 
 app.post('/equipos/:id/editar', upload.single('crestUrl'), (req, res) => {
+  const id = req.params.id
   const equipos = obtenerEquipos()
-  const {id, name, shortname, tla, adress, phone, website, email, founded, clubColors, venue,} = req.body
-  const club = new Club(Number(id),{id: 2072, name: "England"}, name, shortname, tla, `/imagenes/${req.file.filename}`, adress, phone, website, email, founded, clubColors, venue,)
-  const indiceClub = equipos.findIndex(equipo => equipo.id === Number(id))
+  const {name, shortname, tla, adress, phone, website, email, founded, clubColors, venue,} = req.body
+  const indiceClub = equipos.findIndex(equipo => equipo.id === id)
+  let crestUrl =   equipos[indiceClub].crestUrl
+  if(req.file.filename) {
+    crestUrl = `/imagenes/${req.file.filename}`
+  }
+  const club = new Club(id,{id: 2072, name: "England"}, name, shortname, tla, crestUrl, adress, phone, website, email, founded, clubColors, venue)
   equipos[indiceClub] = club
   fs.writeFileSync('./data/equipos.json', JSON.stringify(equipos), 'utf-8' )
   res.redirect("/equipos")
@@ -73,7 +79,7 @@ app.get('/equipos/agregar/', (req, res) => {
 app.post('/equipos/agregar/', upload.single('crestUrl'), (req, res) => {
   const equipos = obtenerEquipos()
   const {id, name, shortname, tla, adress, phone, website, email, founded, clubColors, venue} = req.body
-  const club = new Club(Number(id),{id: 2072, name: "England"}, name, shortname, tla, `/imagenes/${req.file.filename}`, adress, phone, website, email, founded, clubColors, venue)
+  const club = new Club(uuidv4(),{id: 2072, name: "England"}, name, shortname, tla, `/imagenes/${req.file.filename}`, adress, phone, website, email, founded, clubColors, venue)
   equipos.push(club)
   fs.writeFileSync('./data/equipos.json', JSON.stringify(equipos), 'utf-8' );
   res.redirect("/equipos")
@@ -81,7 +87,7 @@ app.post('/equipos/agregar/', upload.single('crestUrl'), (req, res) => {
 
 app.get('/equipos/:id/borrar', (req, res) => {
   const equipos = obtenerEquipos()
-  const idEquipo = Number(req.params.id)
+  const idEquipo = req.params.id
   const indiceClub = equipos.findIndex(equipo => equipo.id === idEquipo)
   equipos.splice(indiceClub, 1)
   fs.writeFileSync('./data/equipos.json', JSON.stringify(equipos), 'utf-8' );
