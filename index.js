@@ -33,7 +33,7 @@ app.get('/equipos', (req, res) => {
 
 app.get('/equipos/:id/ver', (req, res) => {
   const equipos =  obtenerEquipos()
-  const id = req.params.id
+  const id =req.params.id
   res.render('mostrar-equipo', {
     layout: 'estructura',
     data: {
@@ -59,11 +59,7 @@ app.post('/equipos/:id/editar', upload.single('crestUrl'), (req, res) => {
   const equipos = obtenerEquipos()
   const {name, shortname, tla, adress, phone, website, email, founded, clubColors, venue,} = req.body
   const indiceClub = equipos.findIndex(equipo => equipo.id === id)
-  let crestUrl =   equipos[indiceClub].crestUrl
-  if(req.file.filename) {
-    crestUrl = `/imagenes/${req.file.filename}`
-  }
-  const club = new Club(id,{id: 2072, name: "England"}, name, shortname, tla, crestUrl, adress, phone, website, email, founded, clubColors, venue)
+  const club = new Club(id,{id: 2072, name: "England"}, name, shortname, tla, `/imagenes/${req.file.filename}`, adress, phone, website, email, founded, clubColors, venue)
   equipos[indiceClub] = club
   fs.writeFileSync('./data/equipos.json', JSON.stringify(equipos), 'utf-8' )
   res.redirect("/equipos")
