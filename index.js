@@ -69,13 +69,20 @@ app.post('/equipos/:id/editar', upload.single('crestUrl'), (req, res) => {
     venue,
   } = req.body;
   const indiceClub = equipos.findIndex((equipo) => equipo.id === id);
+
+  let { crestUrl } = equipos[indiceClub]
+
+  if(req.file) {
+    crestUrl = `/imagenes/${req.file.filename}`
+  }
+  
   const club = new Club(
     id,
     { id: 2072, name: 'England' },
     name,
     shortname,
     tla,
-    `/imagenes/${req.file.filename}`,
+    crestUrl,
     adress,
     phone,
     website,
